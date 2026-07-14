@@ -151,6 +151,38 @@ if (FIGMA.focusRingRgb) {
   note(!mouse.includes(FIGMA.focusRingRgb), "clean mouse click leaves NO ring (:focus-visible)");
 }
 
+console.log("=== a11y: WCAG 2.2 · 2.5.8 Target Size (Minimum) — AA — 24 x 24 CSS px ===");
+{
+  // 44pt (Apple HIG) / 48dp (Material) are PLATFORM guidance, not WCAG. The AA
+  // conformance floor added in WCAG 2.2 is 24 x 24. Meeting 44 is good practice;
+  // meeting 24 is the requirement. Don't conflate them.
+  //
+  // 2.5.8 EXEMPTS inline targets — "the target is in a sentence, or its size is
+  // otherwise constrained by the line-height of non-target text". An <a> inside a
+  // paragraph is exempt. A standalone control is NOT, even if it's styled to look
+  // like a link. That distinction is the whole point: a link-styled BUTTON in a
+  // component library, with its own loading and disabled states, is a control.
+  const small = await page.locator("button, a[href]").evaluateAll((els) =>
+    els
+      .filter((e) => {
+        const r = e.getBoundingClientRect();
+        if (!r.width || !r.height) return false;                 // hidden
+        if (r.width >= 24 && r.height >= 24) return false;       // passes
+        const inline = getComputedStyle(e).display.startsWith("inline");
+        const inProse = /^(P|LI|SPAN|TD|H[1-6])$/.test(e.parentElement?.tagName ?? "");
+        if (inline && inProse) return false;                     // 2.5.8 inline exception
+        return true;
+      })
+      .map((e) => {
+        const r = e.getBoundingClientRect();
+        const variant = (e.className || "").split(" ").find((c) => c.startsWith("btn--")) ?? e.tagName;
+        return `${variant} ${Math.round(r.width)}x${Math.round(r.height)}`;
+      }),
+  );
+  const uniq = [...new Set(small)];
+  note(uniq.length === 0, `${uniq.length} non-exempt target(s) under 24x24`, uniq.slice(0, 6).join(" | "));
+}
+
 console.log("=== a11y: every icon-only control has an accessible name ===");
 {
   const bare = await page

@@ -249,19 +249,28 @@ code {
   color: #d3dde1;
   white-space: pre;
 }
+/* WCAG 2.2 · 2.5.8 Target Size (Minimum), AA: 24 x 24 CSS px.
+   This was 33x18 — caught by the automated target-size check, not by eye.
+   The links in the SOURCE are 20px and stay that way (mirrored + flagged), but
+   this button is mine, so there's no excuse. */
 .sc-code__copy {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   z-index: 1;
+  min-width: 24px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 11px;
   line-height: 16px;
-  color: #a9b5ba;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #a9b5ba; /* demo-only: docs chrome, not a system colour */
+  background: rgba(255, 255, 255, 0.08); /* demo-only */
+  border: 1px solid rgba(255, 255, 255, 0.14); /* demo-only */
   border-radius: var(--radius-sm);
-  padding: 4px 9px;
+  padding: 4px 10px;
   cursor: pointer;
   transition: background var(--motion-fast) var(--motion-ease);
 }

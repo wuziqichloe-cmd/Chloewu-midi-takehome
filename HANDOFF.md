@@ -1,7 +1,6 @@
 # Handoff — the shared Figma file
 
-Everything below was **read from the file**, not eyeballed. Contrast is measured (WCAG
-2.1); every raw value was found by walking the variant tree and checking `boundVariables`,
+Everything below was **read from the file**, not eyeballed. Contrast is measured (WCAG 2.2); every raw value was found by walking the variant tree and checking `boundVariables`,
 not by looking at hexes.
 
 **Nothing was silently "fixed."** The code mirrors the file exactly, flaws included — a
@@ -133,7 +132,30 @@ It resolves to `#eef5f7` — a page tint. Meanwhile the actual white surfaces we
 (§1). The system has a semantic token no surface uses, and hardcoded the colour one should
 own. Suggest renaming to `bg-canvas` and adding a real `bg-surface` bound to white.
 
-### 4.5 `Colors/Brand/Primaryt 200` — typo in the variable name.
+### 4.5 `Link color` / `Link gray` fail WCAG 2.2 · 2.5.8 (Target Size)
+
+New at **AA** in WCAG 2.2: every target must be at least **24 × 24 CSS px**.
+
+| Variant | Size | 24×24? |
+|---|---|---|
+| `Link color` / `Link gray` — **sm**, **md** | 122 × **20** | ✗ **fail** |
+| `Link color` / `Link gray` — lg, xl | 137 × **24** | ⚠️ exactly on the line |
+| Everything else (38 variants) | ≥ 36 × 36 | ✓ |
+
+2.5.8 exempts links **inline in a sentence** (constrained by line-height). These aren't
+that — they're standalone controls in a component library, with their own `Loading` and
+`Disabled` states. A link inside a paragraph doesn't have a loading spinner. **Used as
+standalone controls, they fail AA.**
+
+Fix: give the link hierarchies vertical padding so the *target* reaches 24px, without
+changing the visual text size. (Or document them as inline-only and remove the
+`Loading` / `Disabled` states, which is arguably the more honest option.)
+
+> Note on 44/48: `44pt` (Apple HIG) and `48dp` (Material) are **platform guidance, not
+> WCAG**. WCAG 2.2 AA is **24 × 24**. Meeting 44 is good practice; meeting 24 is the
+> conformance floor.
+
+### 4.6 `Colors/Brand/Primaryt 200` — typo in the variable name.
 
 ---
 
@@ -147,4 +169,5 @@ own. Suggest renaming to `bg-canvas` and adding a real `bg-surface` bound to whi
 | **P2** | §2 — padding off-scale | needs a designer's call |
 | **P2** | §4.4 — `bg-primary` misnamed | rename + add `bg-surface` |
 | **P3** | §1 — the `opacity: 0.001` focus-ring hack | fragile |
-| **P3** | §4.3, §4.5 — Link duplication, typo | tidy-up |
+| **P1** | §4.5 — Link hierarchies fail 2.5.8 (20px target, AA needs 24) | WCAG 2.2 AA |
+| **P3** | §4.3, §4.6 — Link duplication, typo | tidy-up |

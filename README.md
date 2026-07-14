@@ -13,9 +13,10 @@ npm run dev      # the same page, locally
 npm run verify   # token-lint + typecheck + build — no hardcoded values allowed
 ```
 
-**[→ HANDOFF.md](./HANDOFF.md)** — what I found in the Figma file, prioritised for the
-team: 40 raw whites now bound to a token (zero visual change), a padding scale that
-*cannot* be tokenised as-is, and two P0 contrast bugs.
+**[→ HANDOFF.md](./HANDOFF.md)** — **problems in the Button and tokens I was given, not in
+the components I built.** I changed none of them; each is mirrored in the code and reported
+instead. Two P0 contrast failures, a padding scale that can't be tokenised as-is, and 40 raw
+whites I *did* bind (zero visual change).
 
 ---
 

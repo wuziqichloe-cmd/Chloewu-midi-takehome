@@ -19,7 +19,7 @@ const NAV: NavItem[] = [
   { id: "button", label: "Button", group: "Components" },
   { id: "pill", label: "Selectable Pill", group: "Components" },
   { id: "card", label: "Symptom card", group: "Patterns" },
-  { id: "flags", label: "Flags in the source", group: "Notes" },
+  { id: "flags", label: "Flags in the file", group: "Notes" },
 ];
 
 /** All six in the source. The brief says "3 variants"; the file ships 6. */
@@ -454,52 +454,61 @@ export default function App() {
       {/* ── Flags ──────────────────────────────────────────────────────── */}
       <Section
         id="flags"
-        title="Flags in the source"
+        title="Flags in the provided file"
         blurb={
-          <p>
-            Mirrored, <strong>never fixed</strong>. A component library that quietly
-            disagrees with its design file is worse than one that visibly matches a flawed
-            one. Full write-up, prioritised, in <code>HANDOFF.md</code>.
-          </p>
+          <>
+            <p>
+              <strong>
+                These are problems in the Button and tokens I was given — not in the
+                components I built.
+              </strong>{" "}
+              I changed none of them: each is mirrored faithfully in the code and reported
+              here instead.
+            </p>
+            <p>
+              A library that <em>quietly</em> disagrees with its design file is worse than one
+              that visibly matches a flawed one. Prioritised P0–P3 in <code>HANDOFF.md</code>.
+            </p>
+          </>
         }
       >
         <Flag>
-          <strong>40 raw whites — now bound.</strong> <code>Colors/Basics/white</code>{" "}
-          already existed; 40 fills just weren't bound to it. Fixed in the Figma file, zero
-          visual change. (Careful: <code>Colors/Basics/transparent</code> also resolves to{" "}
-          <code>#ffffff</code>, at <code>a=0</code> — binding that one instead would have
-          erased every Secondary button.)
+          <strong>Primary fails WCAG AA — and gets worse on hover.</strong> White on{" "}
+          <code>Primary 400</code> is <strong>2.69:1</strong>; on hover, <strong>2.04:1</strong>
+          {" "}— the ramp is inverted, so hover <em>lightens</em>. Only <code>Primary 600</code>{" "}
+          passes (4.74:1), and it's reserved for focus. Making 600 the default fixes both, with
+          no new token.
         </Flag>
         <Flag>
-          <strong>Padding 10 / 14 / 18 cannot be tokenised.</strong> They are simply not on
-          the spacing scale (<code>2 · 4 · 6 · 8 · 12 · 16 · 20 · 24…</code>). Every padding
-          that <em>is</em> on the scale is already bound — the designer didn't forget, there
-          was nothing to bind to. Mirrored raw and declared; <strong>never rounded</strong>,
-          because rounding to the nearest token is silently redesigning.
+          <strong>Two hierarchies' labels vanish on hover.</strong> <code>Link color</code> at{" "}
+          <strong>1.32:1</strong>, <code>Link gray</code> at <strong>1.16:1</strong>. Hovering
+          the control makes its own label disappear.
         </Flag>
         <Flag>
-          <strong>Contrast fails, and gets worse on interaction.</strong> White on{" "}
-          <code>Primary 400</code> is <strong>2.69:1</strong>; on hover (
-          <code>Primary 200</code>) it drops to <strong>2.04:1</strong>. Both fail WCAG AA.
-          The only Primary fill that passes is <code>Primary 600</code> (4.74:1) — currently
-          reserved for focus. Making 600 the default and stepping <em>lighter</em> on hover
-          fixes the contrast and the inverted ramp at once, with no new token.
+          <strong><code>Secondary-on brand</code> looks permanently disabled.</strong> Its text
+          is the same grey as <code>fg-disabled</code> in <em>every</em> state.{" "}
+          <strong>Visible in the hierarchy grid above</strong> — that column matches the
+          disabled row.
         </Flag>
         <Flag>
-          <strong>Two hierarchies all but vanish on hover.</strong> <code>Link color</code>
-          's hover text is a raw, unbound <code>#e0e0e0</code> — <strong>1.32:1</strong>.{" "}
-          <code>Link gray</code>'s is <strong>1.16:1</strong>. Hovering the control makes
-          its own label disappear. <em>This one should not be tokenised</em> — naming it
-          would formalise a broken value into the system. It isn't an un-tokenised colour,
-          it's the wrong colour.
+          <strong>Padding 10 / 14 / 18 has no token.</strong> They aren't on the spacing scale.
+          Everything that <em>is</em> on the scale was already bound — nothing was forgotten,
+          there was nothing to bind to. Mirrored raw, <strong>never rounded</strong>: rounding
+          to the nearest token is silently redesigning.
         </Flag>
         <Flag>
-          <strong>
-            <code>Secondary-on brand</code> reads as permanently disabled.
-          </strong>{" "}
-          Its text is <code>utility-brand-100</code> (<code>#bdc8cc</code>) in every state —
-          the same grey as <code>fg-disabled</code> — so Default, Hover, Focused and
-          Disabled are indistinguishable. Visible in the grid above.
+          <strong>Fixed — 40 raw whites now bound.</strong> <code>Colors/Basics/white</code>{" "}
+          existed but went unused. Zero visual change. (Worth checking rather than assuming:{" "}
+          <code>Colors/Basics/transparent</code> <em>also</em> resolves to <code>#ffffff</code>{" "}
+          at <code>a=0</code> — binding by hex would have erased every Secondary button.)
+        </Flag>
+        <Flag>
+          <strong>One knock-on in my Pill — caused by the gap above, not by the component.</strong>{" "}
+          Selected + hover is <strong>4.10:1</strong>. The fill darkens (the Button's own hover
+          mechanism) but the label can't follow: <strong>there's no blue darker than{" "}
+          <code>Primary 600</code></strong>. Dodging it with a border-only hover would have
+          broken the "built on the Button" premise. Mirrored — the fix is a{" "}
+          <code>Primary 700</code> token.
         </Flag>
       </Section>
     </Layout>

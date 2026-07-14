@@ -1,12 +1,15 @@
-# Handoff — the shared Figma file
+# Handoff — problems in the provided Button and tokens
 
-Everything below was **read from the file**, not eyeballed. Contrast is measured (WCAG 2.2); every raw value was found by walking the variant tree and checking `boundVariables`,
-not by looking at hexes.
+**Everything below is a problem in the file I was given — not in the components I built.**
+I changed none of them: each is mirrored faithfully in the code and reported here. The one
+exception is §1, a pure token binding with zero visual effect.
 
-**Nothing was silently "fixed."** The code mirrors the file exactly, flaws included — a
-component library that quietly disagrees with its design file is worse than one that
-visibly matches a flawed one. The one change made *to the file* is §1, and it has zero
-visual effect.
+Why not just fix them: a library that *quietly* disagrees with its design file is worse than
+one that visibly matches a flawed one — the disagreement simply becomes invisible.
+
+Everything was **read from the file**, not eyeballed. Contrast is measured (WCAG 2.2), and
+every raw value was found by walking the variant tree and checking `boundVariables` — not by
+looking at hexes.
 
 ---
 

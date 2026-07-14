@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Button, type ButtonHierarchy, type ButtonSize } from "./components/Button/Button";
+import { SelectablePill } from "./components/SelectablePill/SelectablePill";
 import {
   Column,
   Example,
@@ -14,6 +16,7 @@ import "./showcase/Showcase.css";
 const NAV: NavItem[] = [
   { id: "tokens", label: "Tokens", group: "Foundations" },
   { id: "button", label: "Button", group: "Components" },
+  { id: "pill", label: "Selectable Pill", group: "Components" },
   { id: "flags", label: "Flags in the source", group: "Notes" },
 ];
 
@@ -54,6 +57,8 @@ const STATES = [
 ] as const;
 
 export default function App() {
+  const [live, setLive] = useState(true);
+
   return (
     <Layout nav={NAV}>
       <header id="top" className="sc-head">
@@ -290,6 +295,93 @@ export default function App() {
               desc: "Native. Differs per hierarchy in the source — Primary greys, Secondary stays white, Tertiary keeps no fill.",
             },
             { name: "fullWidth", type: "boolean", default: "false", desc: "Fills its container." },
+          ]}
+        />
+      </Section>
+
+      {/* ── Pill ───────────────────────────────────────────────────────── */}
+      <Section
+        id="pill"
+        title="Selectable Pill"
+        blurb={
+          <>
+            <p>
+              <strong>Built on the Button's foundation</strong> — it reuses the{" "}
+              <code>.btn</code> base (type family, transition, focus treatment, the
+              inset-shadow border technique), and its colours <em>alias</em> the Button's
+              tokens wherever the two genuinely match: the unselected hover{" "}
+              <em>is</em> the Secondary button's hover. Where they don't match, it says so
+              rather than forcing a false alias.
+            </p>
+            <p>
+              But it's its own component, because the two are different things in the
+              accessibility tree: a Button <em>fires an action</em> and holds no state; a
+              Pill <em>holds state</em> and announces it via <code>aria-pressed</code>.
+            </p>
+            <p>
+              <strong>Selected is outlined, not filled.</strong> One primary per screen and
+              the CTA owns it — a solid-brand pill would compete with the CTA and flatten
+              the hierarchy, and would inherit <code>Primary 400</code>'s 2.69:1 contrast
+              failure. Outlined reads clearly at <strong>4.74:1</strong>.
+            </p>
+          </>
+        }
+      >
+        <Example
+          label="Every state"
+          grid
+          code={`const [selected, setSelected] = useState(false)
+
+<SelectablePill
+  label="Brain fog"
+  selected={selected}
+  onSelectedChange={setSelected}
+/>
+
+{/* selected drives BOTH the fill and aria-pressed, so the visual
+    state physically cannot drift from the announced one. */}`}
+          note={
+            <>
+              Exactly the three states in the spec — Default, Hover, Selected — plus the
+              focus treatment the spec asks for under <em>Behavior</em>. There is no
+              disabled pill; it isn't in the spec.
+              <br />
+              <br />
+              <strong>Focus uses the flat ring, and that's the Button's own rule</strong>{" "}
+              — hierarchies with a resting shadow (Primary, Secondary, Secondary-on brand)
+              get the skeuomorphic ring; flat ones (Tertiary, Link color, Link gray) get
+              the plain one. The Pill is flat, so it takes the plain one.
+              <br />
+              <br />
+              <strong>⚠ Selected + hover is 4.10:1 — below AA.</strong> The fill darkens
+              (that's the Button's hover mechanism), but the label can't darken with it:{" "}
+              <code>Primary 600</code> is the darkest blue the system has. It would have
+              been easy to invent a border-only hover to dodge this — that would have
+              broken the "built on the Button" premise. <strong>Mirrored, and flagged</strong>{" "}
+              instead. The fix is a <code>Primary 700</code> token.
+            </>
+          }
+        >
+          <Column label="unselected">
+            <SelectablePill label="Default" selected={false} onSelectedChange={() => {}} />
+            <SelectablePill className="is-hover" label="Hover" selected={false} onSelectedChange={() => {}} />
+            <SelectablePill className="is-focus" label="Focus" selected={false} onSelectedChange={() => {}} />
+          </Column>
+          <Column label="selected">
+            <SelectablePill label="Selected" selected onSelectedChange={() => {}} />
+            <SelectablePill className="is-hover" label="Selected + hover" selected onSelectedChange={() => {}} />
+            <SelectablePill className="is-focus" label="Selected + focus" selected onSelectedChange={() => {}} />
+          </Column>
+          <Column label="live — click me">
+            <SelectablePill label="Brain fog" selected={live} onSelectedChange={setLive} />
+          </Column>
+        </Example>
+
+        <PropsTable
+          rows={[
+            { name: "label", type: "string", desc: "Label only, per the spec. No icon slot." },
+            { name: "selected", type: "boolean", desc: "Drives the fill AND aria-pressed, so the visual state cannot drift from the announced one." },
+            { name: "onSelectedChange", type: "(selected: boolean) => void", desc: "Toggle handler. Space and Enter work — it's a real <button>." },
           ]}
         />
       </Section>

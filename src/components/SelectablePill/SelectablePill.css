@@ -1,0 +1,106 @@
+/* SelectablePill — extends `.btn`.
+   Mirrors `Pills/Selectable Pill` in Figma. Every value is a token.
+
+   Inherits from Button: the type family, the transition curve, and the
+   inset-shadow border technique (see the note at the top of Button.css — Figma
+   strokes are `strokeAlign: INSIDE`, so a CSS `border` would make this 38px
+   instead of 36).
+
+   Overrides only: shape, weight, metrics, the selected/unselected palette, and
+   the elevation. If it needed more than that, it wouldn't be an extension.
+
+   ── The focus rule, and why it's per-STATE and not per-component ──────────
+   The system documents its two focus styles:
+     `focus-ring`                        "for toggles and checkboxes"
+     `focus-ring-shadow-xs-skeuomorphic` "for components that ALSO require a
+                                          shadow. For example, buttons and tabs."
+
+   So focus doesn't pick a style by component type — it **adds a ring and keeps
+   whatever elevation the control already has**. The unselected pill is flat, so
+   it gets the plain ring. The selected pill is raised, so it gets the ring that
+   preserves the shadow. Same rule the Button follows: Tertiary and the Links are
+   flat and take the plain ring; Primary and Secondary are raised and take the
+   skeuomorphic one.
+
+   Getting this wrong in either direction is the same bug: focusing a control
+   should never change what the control *is*. */
+
+.pill {
+  --stroke: inset 0 0 0 1px var(--pill-border);
+
+  border-radius: var(--radius-full);
+
+  /* The Pill has exactly one size, so it doesn't borrow `.btn--md` — it isn't a
+     *size of* Button. Padding 8/16 (spacing-md / spacing-xl), both on the scale.
+     Resolves to 36px, matching the source frame. */
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-text-sm);
+  line-height: var(--line-height-text-sm);
+
+  /* Medium, not semibold — matches the source's `Text sm/Medium`. A pill is one
+     of a dozen choices you're scanning; a Button is a call to action. */
+  font-weight: var(--font-weight-medium);
+
+  /* Unselected: flat. */
+  background-color: var(--pill-bg);
+  color: var(--pill-fg);
+  box-shadow: var(--stroke);
+}
+
+/* Hover — the Button's hover mechanism: the fill changes and the label darkens
+   with it. Identical to the Secondary button's hover, by token alias. */
+.pill:hover,
+.pill.is-hover {
+  --stroke: inset 0 0 0 1px var(--pill-border-hover);
+  background-color: var(--pill-bg-hover);
+  color: var(--pill-fg-hover);
+  box-shadow: var(--stroke);
+}
+
+/* Focus (unselected) — the plain ring. Must be declared here: `.btn:focus-visible`
+   only clears the UA outline; the ring itself lives on the hierarchy classes,
+   which the Pill doesn't use. Without this the Pill would have its outline
+   stripped and nothing put back. */
+.pill:focus-visible,
+.pill.is-focus {
+  box-shadow: var(--stroke), var(--pill-focus-ring);
+}
+
+/* Selected — driven off the ARIA attribute, not a separate class. Deliberate:
+   the same attribute drives the fill and the announcement, so you cannot render
+   a pill that LOOKS selected but doesn't ANNOUNCE as selected.
+
+   Raised: selecting a pill lifts it. */
+.pill[aria-pressed="true"] {
+  --stroke: inset 0 0 0 1px var(--pill-selected-border);
+  background-color: var(--pill-selected-bg);
+  color: var(--pill-selected-fg);
+  box-shadow: var(--stroke), var(--pill-selected-elevation);
+}
+
+/* Selected + hover — the fill darkens, keeping the elevation.
+   ⚠ The label cannot darken with it: Primary 600 is the darkest blue in the
+   system, so contrast drops to 4.10:1 (AA needs 4.5). Mirrored, not worked
+   around — a different hover mechanism here would break the "built on the
+   Button" premise. The fix is a `Primary 700` token. See HANDOFF.md. */
+.pill[aria-pressed="true"]:hover,
+.pill[aria-pressed="true"].is-hover {
+  background-color: var(--pill-selected-bg-hover);
+  box-shadow: var(--stroke), var(--pill-selected-elevation);
+}
+
+/* Selected + focus — the ring that PRESERVES the shadow. Declared after the
+   unselected focus rule so it wins; a selected pill must not go flat when it
+   receives focus. */
+.pill[aria-pressed="true"]:focus-visible,
+.pill[aria-pressed="true"].is-focus {
+  box-shadow: var(--stroke), var(--pill-selected-focus-ring);
+}
+
+/* Layout helper. Gaps mirror the source's Pill group: 8px columns, 12px rows. */
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--spacing-md);
+  row-gap: var(--spacing-lg);
+}

@@ -229,6 +229,68 @@
   /* No --pill-selected-bg-hover: the spec's three states are Default, Hover and
      Selected; selected+hover isn't one of them. Removed rather than kept unused. */
 
+  /* --- Selectable Pill -----------------------------------------------------
+     Read from `Pills/Selectable Pill` in Figma. Every value below is a token in
+     the source — the component has zero raw values.
+
+     Where the pill genuinely matches a Button hierarchy, it ALIASES the button
+     token rather than repeating the primitive, so the two cannot drift apart.
+     Where it doesn't match, it says so instead of forcing a false alias:
+
+       · unselected HOVER  ==  Secondary's hover, exactly. Aliased.
+       · unselected REST   !=  Secondary's rest — the pill uses border-tertiary
+                               (#d3dde1), Secondary uses border-primary (#8998a1).
+                               A quieter chip. Not aliased; that would be a lie.
+       · SELECTED          ==  a new combination (white fill + Primary 400 border
+                               + Primary 600 label). No Button hierarchy does
+                               this — it's the extension. */
+
+  /* unselected · rest */
+  --pill-bg: var(--colors-basics-white);
+  --pill-border: var(--colors-border-border-tertiary);
+  --pill-fg: var(--colors-text-secondary-700);
+
+  /* unselected · hover — identical to the Secondary button's hover */
+  --pill-bg-hover: var(--button-secondary-bg-hover);
+  --pill-border-hover: var(--button-secondary-border);
+  --pill-fg-hover: var(--button-secondary-fg-hover);
+
+  /* selected — the extension. Outlined, not filled: one primary per screen, and
+     the CTA owns it. A solid-brand pill would compete with the CTA and flatten
+     the hierarchy — and would inherit Primary 400's 2.69:1 contrast failure. */
+  --pill-selected-bg: var(--colors-basics-white);
+  --pill-selected-border: var(--colors-brand-primary-400);
+  --pill-selected-fg: var(--colors-brand-primary-600);
+
+  /* selected · hover — the fill darkens (the Button's hover mechanism), but the
+     label cannot darken with it: Primary 600 is the darkest blue the system has.
+     Result: 4.10:1, below AA. Mirrored, NOT worked around — inventing a
+     different hover mechanism here would break the "built on the Button"
+     premise. The real fix is a `Primary 700` token. Flagged in HANDOFF.md. */
+  --pill-selected-bg-hover: var(--colors-background-bg-primary-hover);
+
+  /* Elevation, and the focus ring that goes with it.
+
+     The system's rule, written in its own style descriptions:
+       `focus-ring`                        → "for toggles and checkboxes"
+       `focus-ring-shadow-xs-skeuomorphic` → "for components that ALSO require a
+                                              shadow. For example, buttons and tabs."
+
+     Read that way, the rule isn't "pills use ring X". It's: **focus adds a ring
+     and preserves whatever elevation the control already has.** So it has to be
+     resolved per state, not per component:
+
+       unselected — flat at rest      → plain ring
+       selected   — raised at rest    → the ring that keeps the shadow
+
+     (The Button proves it: Tertiary and the Links are flat and take the plain
+     ring; Primary and Secondary are raised and take the skeuomorphic one.) */
+  --pill-elevation: none;
+  --pill-focus-ring: var(--focus-ring);
+
+  --pill-selected-elevation: var(--shadow-xs-skeuomorphic);
+  --pill-selected-focus-ring: var(--focus-ring-shadow-xs-skeuomorphic);
+
   /* Surfaces & text */
   --surface-page: var(--colors-base-15);
   --surface-card: var(--colors-basics-white);

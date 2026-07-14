@@ -52,31 +52,37 @@ CSS borders sit *outside* the content box and add 2px to an auto-height element.
 real border makes every bordered component 2px taller than its source. Heights land on
 Figma's numbers exactly — **36 / 40 / 44 / 48** — measured in the browser, not assumed.
 
-## Hardcoding is a *declared* act, not an accident
+## Every value is a token — or a gap reported to the team
 
-Prose rules don't prevent hardcoded values — I've broken my own while believing I was being
-careful. So `tokens.css` is the only file allowed a raw value, and **`npm run lint:tokens`
-fails the build on any other.**
+Two jobs, and they're different:
 
-The escape hatch is the interesting part. Real design files *do* contain values with no
-token, and those must be **mirrored, never rounded** — rounding to the nearest token is
-silently redesigning. So a raw value is legal only if the line declares itself:
+1. **Bind everything the system already has a token for.** In the Figma file, 40 fills were
+   raw `#ffffff` while `Colors/Basics/white` sat right there unused. Those are now bound —
+   zero visual change. `gap` and `radius` were already 100% bound.
+2. **Find what the system has *no* token for, and hand that list to the team.** Those values
+   still have to render, so they're mirrored exactly — **never rounded to the nearest
+   token**, because rounding is silently redesigning.
+
+`tokens.css` is the only file allowed to hold a raw value; `npm run lint:tokens` fails the
+build on any other. A value with no token is legal only when the line says so and says why:
 
 ```css
 padding: var(--spacing-lg) 18px;  /* source-raw: 18 is not on the spacing scale */
 ```
 
-Three categories, kept deliberately apart:
+Three markers, kept apart so the report stays clean:
 
-| Marker | Meaning | Reported to the designer? |
+| Marker | Meaning | Goes to the team? |
 |---|---|---|
-| *(none)* | must be a token | ✗ **build fails** |
-| `source-raw:` | source uses it; **system has no token** | ✅ **yes — this is the gap list** |
-| `layout:` | my composition choice | ✗ not a system value |
+| *(none)* | a token exists — bind it | ✗ **build fails** |
+| `source-raw:` | the source uses it; **the system has no token** | ✅ **yes — this is the gap list** |
+| `layout:` | a composition choice, not a system value | ✗ |
 | `demo-only:` | docs furniture | ✗ |
 
-`npm run report:tokens` prints only the `source-raw` lines. **That output is the
-missing-token report — generated, not remembered.**
+**`npm run report:tokens` prints exactly the `source-raw` lines — that output *is* the
+missing-token list**, generated rather than remembered, ready to hand over. Right now it
+returns the spacing gaps (`10 / 14 / 18`) and the unbound icon size, all written up in
+[HANDOFF.md](./HANDOFF.md).
 
 ## Scope
 

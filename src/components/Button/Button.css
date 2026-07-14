@@ -1,0 +1,328 @@
+/* Button — mirrors Figma "Buttons/Button" (node 3287:427074).
+   The `.btn` base is deliberately extendable: step 2's component builds on it. */
+
+/* ── Why there is no `border` anywhere in this file ─────────────────────────
+   Figma draws strokes with `strokeAlign: INSIDE` — the 1px sits *within* the
+   frame's declared height. A CSS `border` does the opposite: it's added around
+   the content box, so a 1px border makes an auto-height element 2px taller.
+
+   Using `border` here made every bordered component 2px taller than its source
+   (the md Button rendered 42px against Figma's 40). The
+   correct CSS equivalent of an inside stroke is an INSET box-shadow, which
+   paints over the element and occupies no layout space.
+
+   So: borders are `inset 0 0 0 1px`, composed into the same box-shadow list as
+   the elevation and focus ring. Heights now land on Figma's numbers exactly —
+   36 / 40 / 44 / 48 — which is verifiable, not asserted.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.btn {
+  appearance: none;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  white-space: nowrap;
+  border-radius: var(--radius-sm);
+
+  transition:
+    background-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease);
+}
+
+/* --- Size ------------------------------------------------------------------
+   Padding + line-height read from the Figma frames, then cross-checked against
+   the rendered variant widths (sm 150 / md 154 / lg 173 / xl 177px).
+   Heights = padding + line-height → 36 / 40 / 44 / 48, matching the source. */
+/* sm's 8/12 ARE on the spacing scale — tokenised.
+   md's 10/14 and xl's 18 are NOT (the scale is 2/4/6/8/12/16); they're raw
+   values in the Figma frame, so they're mirrored raw and flagged rather than
+   rounded to the nearest token.
+
+   `gap` is NOT constant across the ramp: sm/md use 4px, lg/xl use 6px. I had it
+   hardcoded to 4 everywhere — caught by reading the frames rather than assuming
+   a single token. */
+.btn--sm {
+  padding: var(--spacing-md) var(--spacing-lg);
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-text-sm);
+  line-height: var(--line-height-text-sm);
+}
+.btn--md {
+  padding: 10px 14px; /* source-raw: md padding — 10 and 14 are not on the spacing scale */
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-text-sm);
+  line-height: var(--line-height-text-sm);
+}
+.btn--lg {
+  padding: 10px var(--spacing-xl); /* source-raw: 10 is not on the spacing scale */
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-text-md);
+  line-height: var(--line-height-text-md);
+}
+.btn--xl {
+  /* 18px horizontal is NOT on the spacing scale — raw in the Figma frame.
+     (I first derived 20px by back-computing from the rendered variant width;
+     reading the frame's actual padding says 18. Derivation lost to measurement.) */
+  padding: var(--spacing-lg) 18px; /* source-raw: 18 is not on the spacing scale */
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-text-md);
+  line-height: var(--line-height-text-md);
+}
+
+/* --- Icons -----------------------------------------------------------------
+   20px in every size — the icon does not scale with the button (read from the
+   source; I'd have guessed it did). */
+.btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px; /* source-raw: the icon node is 20x20 and unbound in Figma */
+  height: 20px; /* source-raw: same — no icon-size token exists */
+}
+.btn__icon > svg,
+.btn__icon > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* --- Icon only -------------------------------------------------------------
+   Square. Padding is (size − 20) / 2, so the frames land on 36/40/44/48 exactly.
+   Note 10 and 14 are off-scale, same as the text paddings above. */
+.btn--icon-only {
+  gap: 0;
+}
+.btn--icon-only.btn--sm {
+  padding: var(--spacing-md);
+}
+.btn--icon-only.btn--md {
+  padding: 10px; /* source-raw: (40 - 20) / 2, off-scale */
+}
+.btn--icon-only.btn--lg {
+  padding: var(--spacing-lg);
+}
+.btn--icon-only.btn--xl {
+  padding: 14px; /* source-raw: (48 - 20) / 2, off-scale */
+}
+
+/* Figma wraps the label in a 2px-padded "Text padding" frame. Reproduced so
+   label metrics match the source exactly rather than approximately. */
+.btn__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--spacing-xxs);
+}
+
+/* --- Hierarchy -------------------------------------------------------------
+   Each reads only its own semantic tokens — no primitives at this layer.
+   `--stroke` is the inside border; it composes into every box-shadow below. */
+
+/* Primary — filled, no stroke. Carries Figma's skeuomorphic inner shadows. */
+.btn--primary {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-fg);
+  box-shadow: var(--shadow-xs-skeuomorphic);
+}
+.btn--primary:hover:not(:disabled),
+.btn--primary.is-hover:not(:disabled) {
+  background-color: var(--button-primary-bg-hover);
+}
+.btn--primary:focus-visible,
+.btn--primary.is-focus {
+  background-color: var(--button-primary-bg-focus);
+  box-shadow: var(--focus-ring-shadow-xs-skeuomorphic);
+}
+
+/* Secondary — white fill + 1px inside stroke. */
+.btn--secondary {
+  --stroke: inset 0 0 0 1px var(--button-secondary-border);
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-fg);
+  box-shadow: var(--stroke), var(--shadow-xs-skeuomorphic);
+}
+.btn--secondary:hover:not(:disabled),
+.btn--secondary.is-hover:not(:disabled) {
+  background-color: var(--button-secondary-bg-hover);
+  color: var(--button-secondary-fg-hover);
+}
+.btn--secondary:focus-visible,
+.btn--secondary.is-focus {
+  box-shadow: var(--stroke), var(--focus-ring-shadow-xs-skeuomorphic);
+}
+
+/* Tertiary — no fill, no stroke, no elevation. */
+.btn--tertiary {
+  background-color: transparent;
+  color: var(--button-tertiary-fg);
+  box-shadow: none;
+}
+.btn--tertiary:hover:not(:disabled),
+.btn--tertiary.is-hover:not(:disabled) {
+  background-color: var(--button-tertiary-bg-hover);
+  color: var(--button-tertiary-fg-hover);
+}
+/* Source has an explicit white fill on Tertiary/Focused (Default is fill-less).
+   Visually identical on a white surface, but mirrored rather than assumed. */
+.btn--tertiary:focus-visible,
+.btn--tertiary.is-focus {
+  background-color: var(--colors-basics-white);
+  box-shadow: var(--focus-ring);
+}
+
+/* Secondary-on brand — filled, bordered.
+   ⚠ Its text token is `utility-brand-100` (#bdc8cc) in EVERY state, which is the
+   same grey as fg-disabled. So this control reads as permanently disabled, and
+   its Disabled state is indistinguishable from its Default. Mirrored, flagged. */
+.btn--secondary-on-brand {
+  --stroke: inset 0 0 0 1px var(--button-on-brand-border);
+  background-color: var(--button-on-brand-bg);
+  color: var(--button-on-brand-fg);
+  box-shadow: var(--stroke), var(--shadow-xs-skeuomorphic);
+}
+.btn--secondary-on-brand:hover:not(:disabled),
+.btn--secondary-on-brand.is-hover:not(:disabled) {
+  background-color: var(--button-on-brand-bg-hover);
+}
+.btn--secondary-on-brand:focus-visible,
+.btn--secondary-on-brand.is-focus {
+  --stroke: inset 0 0 0 1px var(--button-on-brand-border-focus);
+  box-shadow: var(--stroke), var(--focus-ring-shadow-xs-skeuomorphic);
+}
+
+/* --- Link hierarchies -------------------------------------------------------
+   These are TEXT LINKS, not buttons: padding 0, no fill, no elevation, no
+   stroke. Their height is just the line-height (20 / 24). The size classes above
+   still set the type ramp, so only padding needs zeroing. */
+.btn--link-color,
+.btn--link-gray {
+  padding: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+.btn--link-color:focus-visible,
+.btn--link-color {
+  color: var(--button-link-color-fg);
+}
+/* ⚠ 1.32:1. The label all but disappears on hover. Source value, mirrored. */
+.btn--link-color:hover:not(:disabled),
+.btn--link-color.is-hover:not(:disabled) {
+  color: var(--button-link-color-fg-hover);
+}
+
+.btn--link-gray {
+  color: var(--button-link-gray-fg);
+}
+/* ⚠ 1.16:1. Same problem. Source value, mirrored. */
+.btn--link-gray:hover:not(:disabled),
+.btn--link-gray.is-hover:not(:disabled) {
+  color: var(--button-link-gray-fg-hover);
+}
+
+/* `.is-hover` / `.is-focus` — FORCED states, for the docs page only.
+   They are appended to the REAL selectors above rather than re-declaring the
+   styles, so the documentation physically cannot drift from the component: there
+   is exactly one declaration block per state. Nothing in the app sets them. */
+
+/* --- Focus -----------------------------------------------------------------
+   :focus-visible, not :focus — a mouse click shouldn't leave a ring behind.
+   Keyboard users get it, mouse users don't. The ring is a box-shadow (as in
+   Figma, which uses a spread drop-shadow), so it hugs the border-radius —
+   whatever the radius. */
+.btn:focus-visible {
+  outline: none;
+}
+
+/* --- Loading ---------------------------------------------------------------
+   Like `disabled`, this is app state, not a browser state — so it IS a prop, not
+   a pseudo-class. The fill changes per hierarchy (read from the source); the
+   label keeps its normal colour. */
+.btn--loading {
+  cursor: progress;
+}
+.btn--primary.btn--loading {
+  background-color: var(--button-primary-bg-loading);
+}
+.btn--secondary.btn--loading {
+  background-color: var(--button-secondary-bg-loading);
+}
+.btn--tertiary.btn--loading {
+  background-color: var(--button-tertiary-bg-loading);
+}
+.btn--secondary-on-brand.btn--loading {
+  background-color: var(--button-on-brand-bg-loading);
+}
+
+.btn__spinner {
+  width: 20px; /* source-raw: matches the icon slot; unbound in Figma */
+  height: 20px; /* source-raw: same */
+  flex-shrink: 0;
+  animation: btn-spin 700ms linear infinite;
+}
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn__spinner {
+    animation: none;
+  }
+}
+
+/* --- Disabled --------------------------------------------------------------
+   CORRECTION: an earlier pass collapsed all three hierarchies onto one disabled
+   fill and claimed that came from Figma. It didn't — I invented it. Re-read from
+   the source (Size=md slice), disabled differs per hierarchy:
+
+     Primary    fill #eef5f7 (bg-disabled)   + disabled_subtle stroke
+     Secondary  fill #ffffff (WHITE)         + disabled_subtle stroke
+     Tertiary   no fill                      + no stroke
+
+   Only the text colour (fg-disabled) and the drop of the skeuomorphic inners are
+   shared. Mirrored exactly, per hierarchy. */
+.btn:disabled {
+  color: var(--button-disabled-fg);
+  cursor: not-allowed;
+}
+
+.btn--primary:disabled {
+  background-color: var(--button-disabled-bg);
+  box-shadow: inset 0 0 0 1px var(--button-disabled-border), var(--shadow-xs);
+}
+
+.btn--secondary:disabled {
+  background-color: var(--colors-basics-white);
+  box-shadow: inset 0 0 0 1px var(--button-disabled-border), var(--shadow-xs);
+}
+
+.btn--tertiary:disabled {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.btn--secondary-on-brand:disabled {
+  background-color: var(--button-disabled-bg);
+  box-shadow: inset 0 0 0 1px var(--button-on-brand-disabled-border);
+}
+
+/* Links carry no fill and no shadow when disabled — only the text colour drops. */
+.btn--link-color:disabled,
+.btn--link-gray:disabled {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.btn--full {
+  width: 100%;
+}

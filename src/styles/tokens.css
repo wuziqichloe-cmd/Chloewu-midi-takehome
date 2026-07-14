@@ -1,0 +1,238 @@
+/* =============================================================================
+   Design tokens — transcribed from the Figma file, not invented.
+   Source: Copy of Mini Design System → Buttons/Button (node 3287:427074)
+
+   Two layers:
+     1. PRIMITIVES — mirror Figma's variable names 1:1 (`Colors/Brand/Primary 600`
+        → `--colors-brand-primary-600`). Deliberately mechanical: when the Figma
+        variables change, this file is a find-and-replace, not a rethink.
+     2. SEMANTICS — role-named aliases. Components may ONLY consume these.
+
+   Where I had to add a token that Figma doesn't have, it's marked  ✎ NEW.
+   Where Figma's own value looks wrong, it's marked  ⚠ MIRRORED — see NOTES.md.
+   I did not silently correct anything.
+   ============================================================================= */
+
+:root {
+  /* --- 1. PRIMITIVES (from Figma variables) ------------------------------- */
+
+  /* Brand */
+  --colors-brand-primary-200: #88b8fb; /* Figma: "Colors/Brand/Primaryt 200" (sic) */
+  --colors-brand-primary-400: #579fff;
+  --colors-brand-primary-600: #006af9;
+
+  /* Base / neutrals */
+  --colors-basics-white: #ffffff;
+  --colors-base-15: #eef5f7;
+  --colors-base-200: #a9b5ba;
+
+  /* Component colors */
+  --colors-utility-brand-100: #bdc8cc; /* what Secondary-on brand uses for TEXT,
+                                          in every state — see NOTES.md flag 4 */
+
+  /* ⚠ RAW, unbound in Figma — `Link color`'s hover text is a hardcoded hex with
+     no variable behind it. Mirrored so the build matches the source; it is the
+     cause of the 1.32:1 hover contrast. Flagged, not fixed. */
+  --colors-raw-link-color-hover-text: #e0e0e0;
+
+  /* Text */
+  --colors-text-white: #ffffff;
+  --colors-text-secondary-700: #6b7c88;
+  --colors-text-secondary-hover: #415465;
+  --colors-text-secondary-on-brand: #e7f0f3;
+
+  /* Foreground */
+  --colors-foreground-fg-quaternary-400: #8998a1;
+  --colors-foreground-fg-quaternary-hover: #6b7c88;
+  --colors-foreground-fg-secondary-hover: #283c4e;
+  --colors-foreground-fg-disabled: #bdc8cc;
+  --colors-foreground-fg-disabled-subtle: #d3dde1;
+
+  /* Background
+     ⚠ CAREFUL: `bg-primary` is NOT white. In Figma it aliases Colors/Base/15
+     and resolves to #eef5f7. Reading the resolved hex off a node reports
+     #ffffff in some contexts, which is misleading — I only caught this by
+     following the alias chain. The system's actual white surfaces (the
+     Secondary button, cards) use a raw unbound white; see NOTES.md. */
+  --colors-background-bg-primary: #eef5f7;
+  --colors-background-bg-primary-hover: #e7f0f3;
+  --colors-background-bg-secondary-hover: #d3dde1;
+  --colors-background-bg-disabled: #eef5f7;
+
+  /* Border */
+  --colors-border-border-primary: #8998a1;
+  --colors-border-border-tertiary: #d3dde1;
+  --colors-border-border-disabled-subtle: #eef5f7;
+
+  /* Effects */
+  --colors-effects-shadows-shadow-xs: rgba(10, 13, 18, 0.05);
+  --colors-effects-shadows-shadow-skeu-inner: rgba(10, 13, 18, 0.05);
+  --colors-effects-shadows-shadow-skeu-inner-border: rgba(10, 13, 18, 0.18);
+  --colors-effects-focus-rings-focus-ring: #b6e7a0;
+
+  /* Composite effect styles, exactly as Figma composes them. */
+  --shadow-xs: 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs);
+
+  --shadow-xs-skeuomorphic:
+    0 1px 2px 0 var(--colors-effects-shadows-shadow-xs),
+    inset 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeu-inner),
+    inset 0 0 0 1px var(--colors-effects-shadows-shadow-skeu-inner-border);
+
+  --focus-ring-shadow-xs-skeuomorphic:
+    0 0 0 2px var(--colors-effects-focus-rings-focus-ring),
+    0 1px 2px 0 var(--colors-effects-shadows-shadow-xs),
+    inset 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeu-inner),
+    inset 0 0 0 1px var(--colors-effects-shadows-shadow-skeu-inner-border);
+
+  /* Flat focus ring (no skeuomorphic inners) — for Tertiary, which has no fill. */
+  --focus-ring:
+    0 0 0 2px var(--colors-background-bg-primary),
+    0 0 0 4px var(--colors-effects-focus-rings-focus-ring);
+
+  /* Spacing — Figma's scale. NOTE: not a 4px grid (2/4/6/8/12/16). */
+  --spacing-xxs: 2px;
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
+  --spacing-md: 8px;
+  --spacing-lg: 12px;
+  --spacing-xl: 16px;
+  --spacing-2xl: 20px; /* ✎ NEW — needed for xl button padding + card gaps */
+  --spacing-3xl: 24px; /* ✎ NEW */
+  --spacing-4xl: 32px; /* ✎ NEW */
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-lg: 12px; /* ✎ NEW — card corner */
+  --radius-full: 9999px; /* the Pill's shape — already existed in Figma's
+                            Radius collection; reused, not invented. */
+
+  /* --- Type ---------------------------------------------------------------
+     The full ramp from Figma's "6. Typography" collection. Sizes and line
+     heights are paired exactly as the collection pairs them — text-xl is
+     20/30, NOT 20/28 (I guessed 28 before checking; the token says 30).
+
+     ⚠ TWO THINGS IN THE FIGMA FILE DISAGREE WITH THEMSELVES. See NOTES.md.
+
+     1. `Font family/font-family-body` = "Test Söhne" — but every text STYLE in
+        the file (Text sm/Semibold, etc.) and the Button component itself render
+        DM Sans. The variable is stale; the styles are what's actually applied.
+        I follow the styles.
+     2. `Font weight/semibold` = "Bold" and `Font weight/bold` = "Black", while
+        the text styles use SemiBold and ExtraBold respectively. The weight
+        VARIABLES and the text STYLES disagree. Again I follow the styles, which
+        is what the Button actually renders. */
+  --font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --font-size-text-xs: 12px;
+  --line-height-text-xs: 18px;
+  --font-size-text-sm: 14px;
+  --line-height-text-sm: 20px;
+  --font-size-text-md: 16px;
+  --line-height-text-md: 24px;
+  --font-size-text-lg: 18px;
+  --line-height-text-lg: 28px;
+  --font-size-text-xl: 20px;
+  --line-height-text-xl: 30px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Letter-spacing is 0 on every `Text` style in the file (only the `Display`
+     styles carry -2%). An earlier pass had -0.01em on the card title — that was
+     invented, and it's gone. Declared explicitly so nobody re-adds it by feel. */
+  /* Declared explicitly so nobody re-adds tracking by feel.
+     (getComputedStyle reports this as `normal` — Chromium serializes a zero
+     letter-spacing that way. The declaration IS applied; `normal` and `0px`
+     are the same thing here.) */
+  --letter-spacing-text: 0px;
+
+  /* Motion  ✎ NEW — Figma carries no motion tokens. One duration, one curve. */
+  --motion-fast: 120ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* --- 2. SEMANTICS ------------------------------------------------------- */
+
+  /* Button · Primary
+     ⚠ MIRRORED: Figma's ramp is Default=400, Hover=200 (LIGHTER), Focused=600.
+     Hover lightening on press-approach is backwards from every convention, and
+     "Primaryt 200" is a typo in the source. I've mirrored it rather than
+     quietly fixing it — flagged in NOTES.md as a question for the designer. */
+  --button-primary-bg: var(--colors-brand-primary-400);
+  --button-primary-bg-hover: var(--colors-brand-primary-200);
+  --button-primary-bg-focus: var(--colors-brand-primary-600);
+  --button-primary-fg: var(--colors-text-white);
+
+  /* Button · Secondary
+     Fill is `Colors/Basics/white`, matching Figma — where it is a RAW, unbound
+     white rather than a semantic token. Bound here so at least the code side
+     has one name for it. */
+  --button-secondary-bg: var(--colors-basics-white);
+  --button-secondary-bg-hover: var(--colors-background-bg-primary-hover);
+  --button-secondary-fg: var(--colors-text-secondary-700);
+  --button-secondary-fg-hover: var(--colors-text-secondary-hover);
+  --button-secondary-border: var(--colors-border-border-primary);
+
+  /* Button · Tertiary */
+  --button-tertiary-bg-hover: var(--colors-background-bg-primary-hover);
+  --button-tertiary-fg: var(--colors-text-secondary-700);
+  --button-tertiary-fg-hover: var(--colors-text-secondary-hover);
+
+  /* Button · Secondary-on brand
+     ⚠ Its text is `utility-brand-100` (#bdc8cc) in EVERY state — the same grey the
+     system uses for fg-disabled. So Default/Hover/Focused/Disabled all read the
+     same, and the control looks permanently disabled (1.55:1). Mirrored. */
+  --button-on-brand-bg: var(--colors-base-15);
+  --button-on-brand-bg-hover: var(--colors-background-bg-secondary-hover);
+  --button-on-brand-fg: var(--colors-utility-brand-100);
+  --button-on-brand-border: var(--colors-base-200);
+  --button-on-brand-border-focus: var(--colors-border-border-primary);
+
+  /* Button · Link color
+     ⚠ Its hover text is a RAW #e0e0e0 → 1.32:1. The label all but vanishes on
+     hover. Mirrored exactly; flagged. Note its text is the SAME token as Link
+     gray, so "Link color" isn't actually coloured. */
+  --button-link-color-fg: var(--colors-text-secondary-700);
+  --button-link-color-fg-hover: var(--colors-raw-link-color-hover-text);
+
+  /* Button · Link gray
+     ⚠ Hover text is `text-secondary_on-brand` (#e7f0f3) → 1.16:1 on white. */
+  --button-link-gray-fg: var(--colors-text-secondary-700);
+  --button-link-gray-fg-hover: var(--colors-text-secondary-on-brand);
+
+  /* Button · Loading — fill per hierarchy, label keeps its default colour */
+  --button-primary-bg-loading: var(--colors-brand-primary-600);
+  --button-secondary-bg-loading: var(--colors-background-bg-primary-hover);
+  --button-tertiary-bg-loading: var(--colors-background-bg-primary-hover);
+  --button-on-brand-bg-loading: var(--colors-base-15);
+
+  /* Button · Disabled — differs per hierarchy; see Button.css */
+  --button-disabled-bg: var(--colors-background-bg-disabled);
+  --button-disabled-fg: var(--colors-foreground-fg-disabled);
+  --button-disabled-border: var(--colors-border-border-disabled-subtle);
+  --button-on-brand-disabled-border: var(--colors-border-border-tertiary);
+
+  /* Pill · selection  ✎ NEW semantic group.
+     Unselected = Secondary button's palette. Selected = Primary button's
+     palette. Both ALIAS the button tokens rather than re-declaring hexes, so a
+     fix to the primary ramp (see ⚠ above) propagates to the pill for free. */
+  --pill-bg: var(--button-secondary-bg);
+  --pill-bg-hover: var(--button-secondary-bg-hover);
+  --pill-fg: var(--button-secondary-fg);
+  --pill-fg-hover: var(--button-secondary-fg-hover);
+  --pill-border: var(--colors-border-border-tertiary);
+  --pill-border-hover: var(--colors-border-border-primary);
+
+  --pill-selected-bg: var(--button-primary-bg);
+  --pill-selected-fg: var(--button-primary-fg);
+  --pill-selected-border: var(--button-primary-bg);
+  /* No --pill-selected-bg-hover: the spec's three states are Default, Hover and
+     Selected; selected+hover isn't one of them. Removed rather than kept unused. */
+
+  /* Surfaces & text */
+  --surface-page: var(--colors-base-15);
+  --surface-card: var(--colors-basics-white);
+  --border-subtle: var(--colors-border-border-tertiary);
+  --text-strong: var(--colors-foreground-fg-secondary-hover);
+  --text-muted: var(--colors-text-secondary-700);
+}

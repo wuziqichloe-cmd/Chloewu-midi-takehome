@@ -23,6 +23,16 @@ visual effect.
 
 All four sizes plus the icon-only variants. **Raw whites remaining: 0.**
 
+Also bound, on both card frames (`Card / Symptom select`, `Card / Symptom empty`):
+
+| Where | Was | Now |
+|---|---|---|
+| card corner radius | raw `12px` | `radius-xl` |
+| card padding | raw `24px` | `spacing-3xl` |
+
+Both tokens already existed. The only raw value left anywhere in the cards is the CTA's
+`18px` horizontal padding — see §2, the source has no token for it.
+
 > ⚠️ **A trap worth knowing:** `Colors/Basics/transparent` *also* resolves to `#ffffff` — at
 > `a=0`. Binding by resolved hex alone would have picked it and **erased every Secondary
 > button**. The bind is guarded on alpha.

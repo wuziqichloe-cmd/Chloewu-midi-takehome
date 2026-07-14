@@ -1,6 +1,6 @@
 # Midi — Design Engineer take-home
 
-**Step 1 — Button → code.** *(Steps 2 and 3 to follow.)*
+Button → code, extended into a **Selectable Pill**, applied in a symptom-select card.
 
 ```bash
 npm install
@@ -20,7 +20,10 @@ team: 40 raw whites now bound to a token (zero visual change), a padding scale t
 src/
   styles/tokens.css     # Figma variables, transcribed 1:1.
                         # The ONLY file allowed to contain a raw value.
-  components/Button/    # 6 hierarchies × 4 sizes × every state × both icon axes
+  components/
+    Button/             # 6 hierarchies × 4 sizes × every state × both icon axes
+    SelectablePill/     # the toggle, built on the Button's foundation
+    SymptomCard/        # the mini UI
   showcase/             # the docs page. NOT part of the system — demo furniture.
 tools/
   token-lint.mjs        # fails the build on any undeclared hardcoded value
@@ -46,6 +49,15 @@ Collapsing the two into one mechanism is the mistranslation. (Loading in particu
 **not** use the native `disabled` attribute — that rips the button out of the tab order the
 instant it starts, so a keyboard user loses their place mid-flow. It stays focusable, sets
 `aria-busy`, and refuses the activation.)
+
+**Focus adds a ring and preserves the control's elevation.** The system documents its two
+focus styles — `focus-ring` *"for toggles and checkboxes"*, and
+`focus-ring-shadow-xs-skeuomorphic` *"for components that ALSO require a shadow"*. Read that
+way, the rule isn't "pills use ring X"; it's resolved **per state**: the unselected pill is
+flat so it takes the plain ring, the selected pill is raised so it takes the ring that keeps
+the shadow. Same rule the Button follows (Tertiary and the Links are flat → plain ring;
+Primary and Secondary are raised → skeuomorphic). Getting it wrong in either direction is
+the same bug: **focusing a control must never change what the control is.**
 
 **Borders are `inset` box-shadows, not `border`.** Figma strokes are `strokeAlign: INSIDE`;
 CSS borders sit *outside* the content box and add 2px to an auto-height element. Using a
@@ -95,5 +107,19 @@ The brief calls the file "3 variants"; it ships **6 hierarchies** and a Loading 
 are broken in the source.** Mirroring a flawed component faithfully and saying so is the
 job; quietly declining to build it is not.
 
-Verified against Figma: 18 hierarchy × state colour pairs, 4 size ramps, 4 loading fills.
-**0 divergences.**
+Verified against Figma at every step — 18 hierarchy × state colour pairs, 4 size ramps, 4
+loading fills, all 6 pill variants (fill / text / border / elevation / focus ring), and the
+card's container, spacing rhythm, type styles and CTA states. **0 divergences.**
+
+## What the Figma file couldn't say, and the code had to
+
+Three places where copying Figma's *shape* would have been the mistranslation:
+
+- **`State` is one enum in Figma; it's two mechanisms in code.** Hover and focus are
+  pseudo-classes (the browser owns them); disabled and loading are props (real app state).
+- **`Card / Symptom empty` is a separate frame in Figma; it's a *state* in code.** Figma has
+  no conditional rendering, so an empty state must be drawn. `disabled={count === 0}` is the
+  whole of it — not a second component.
+- **Figma variants are mutually exclusive; CSS pseudo-classes compose.** A pill can be
+  focused *and* hovered at once in the browser; Figma can't express that, so it isn't a gap
+  in the design file.

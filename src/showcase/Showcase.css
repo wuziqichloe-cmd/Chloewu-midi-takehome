@@ -207,7 +207,7 @@ code {
   padding: var(--spacing-4xl) var(--spacing-3xl);
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 .sc-preview--grid {
   align-items: flex-start;
@@ -235,7 +235,7 @@ code {
   position: relative;
   background: #17252a;
   border: 1px solid #17252a;
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   overflow: hidden;
 }
 .sc-code pre {
@@ -287,7 +287,7 @@ code {
 .sc-tablewrap {
   overflow-x: auto;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   background: var(--surface-card);
 }
 .sc-table {

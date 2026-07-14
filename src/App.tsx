@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, type ButtonHierarchy, type ButtonSize } from "./components/Button/Button";
 import { SelectablePill } from "./components/SelectablePill/SelectablePill";
+import { SymptomCard } from "./components/SymptomCard/SymptomCard";
 import {
   Column,
   Example,
@@ -17,6 +18,7 @@ const NAV: NavItem[] = [
   { id: "tokens", label: "Tokens", group: "Foundations" },
   { id: "button", label: "Button", group: "Components" },
   { id: "pill", label: "Selectable Pill", group: "Components" },
+  { id: "card", label: "Symptom card", group: "Patterns" },
   { id: "flags", label: "Flags in the source", group: "Notes" },
 ];
 
@@ -384,6 +386,69 @@ export default function App() {
             { name: "onSelectedChange", type: "(selected: boolean) => void", desc: "Toggle handler. Space and Enter work — it's a real <button>." },
           ]}
         />
+      </Section>
+
+      {/* ── Card ───────────────────────────────────────────────────────── */}
+      <Section
+        id="card"
+        title="Symptom card"
+        blurb={
+          <>
+            <p>
+              Title, 4–6 pills, primary CTA. <strong>Hierarchy comes from spacing and
+              weight, not from adding more colour</strong> — the card has exactly{" "}
+              <em>one</em> filled element, the CTA, and the selected pills are outlined,
+              so nothing competes with it.
+            </p>
+            <p>
+              The rhythm is deliberately uneven: <strong>20px</strong> between the question
+              and its answers (they travel together), <strong>48px</strong> before the CTA
+              (a commitment gets room to breathe). A single even gap would flatten all
+              three into one list.
+            </p>
+            <p>
+              The Figma file also has a <code>Card / Symptom empty</code> frame with the CTA
+              disabled. <strong>That isn't a second component</strong> — it's the same card
+              at zero selections. In Figma an empty state must be drawn as its own frame; in
+              code it's a state, not a variant: <code>disabled={"{count === 0}"}</code> is
+              the whole of it.
+            </p>
+          </>
+        }
+      >
+        <Example
+          label="Live — click the pills"
+          code={`<SymptomCard />
+
+// inside:
+<fieldset>
+  <legend className="card__legend">Symptoms</legend>
+  <div className="pill-group">
+    {SYMPTOMS.map((s) => (
+      <SelectablePill key={s} label={s} selected={...} onSelectedChange={...} />
+    ))}
+  </div>
+</fieldset>
+
+<Button hierarchy="primary" size="xl" fullWidth disabled={count === 0}>
+  Continue
+</Button>`}
+          note={
+            <>
+              A <code>&lt;fieldset&gt;</code> with a visually-hidden{" "}
+              <code>&lt;legend&gt;</code> gives the group an accessible name — a screen
+              reader announces "Symptoms, group" before the six toggles, instead of six
+              orphaned buttons.
+              <br />
+              <br />
+              The selection count is <strong>announced but not drawn</strong>. A sighted
+              user gets feedback from the pill inverting; without an{" "}
+              <code>aria-live</code> region a screen-reader user would get none at all.
+            </>
+          }
+        >
+          <SymptomCard />
+        </Example>
       </Section>
 
       {/* ── Flags ──────────────────────────────────────────────────────── */}

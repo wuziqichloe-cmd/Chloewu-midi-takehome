@@ -69,9 +69,16 @@
   --colors-effects-shadows-shadow-skeu-inner: rgba(10, 13, 18, 0.05);
   --colors-effects-shadows-shadow-skeu-inner-border: rgba(10, 13, 18, 0.18);
   --colors-effects-focus-rings-focus-ring: #b6e7a0;
+  --colors-effects-shadows-shadow-md-01: rgba(10, 13, 18, 0.1);
+  --colors-effects-shadows-shadow-md-02: rgba(10, 13, 18, 0.06);
 
   /* Composite effect styles, exactly as Figma composes them. */
   --shadow-xs: 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs);
+
+  /* Shadows/shadow-md — the card's elevation. Composed exactly as Figma stacks it. */
+  --shadow-md:
+    0 2px 4px -2px var(--colors-effects-shadows-shadow-md-02),
+    0 4px 6px -1px var(--colors-effects-shadows-shadow-md-01);
 
   --shadow-xs-skeuomorphic:
     0 1px 2px 0 var(--colors-effects-shadows-shadow-xs),
@@ -89,22 +96,37 @@
     0 0 0 2px var(--colors-background-bg-primary),
     0 0 0 4px var(--colors-effects-focus-rings-focus-ring);
 
-  /* Spacing — Figma's scale. NOTE: not a 4px grid (2/4/6/8/12/16). */
+  /* Spacing — Figma's `3. Spacing` collection, transcribed. NOT a 4px grid.
+     CORRECTION: 2xl/3xl/4xl were previously marked ✎ NEW here. They are not new
+     — they exist in the source. Marking a real token as invented is worse than
+     it sounds: it tells the next reader the system is missing something it isn't,
+     and it's exactly backwards from the job (bind what exists, flag what doesn't). */
+  --spacing-xxxs: 1px;
   --spacing-xxs: 2px;
   --spacing-xs: 4px;
   --spacing-sm: 6px;
   --spacing-md: 8px;
   --spacing-lg: 12px;
   --spacing-xl: 16px;
-  --spacing-2xl: 20px; /* ✎ NEW — needed for xl button padding + card gaps */
-  --spacing-3xl: 24px; /* ✎ NEW */
-  --spacing-4xl: 32px; /* ✎ NEW */
+  --spacing-2xl: 20px;
+  --spacing-3xl: 24px;
+  --spacing-4xl: 32px;
+  --spacing-5xl: 40px;
+  --spacing-6xl: 48px;
 
-  /* Radius */
+  /* Radius — Figma's `2. Radius` collection, transcribed.
+     ⚠ CORRECTION: this file previously declared `--radius-lg: 12px` as ✎ NEW.
+     Both halves were wrong. Figma's `radius-lg` is **10px**; the 12px token is
+     `radius-xl`. So the name collided with a real token that holds a different
+     value — the hardest kind of error to spot, because the code reads as correct. */
+  --radius-xxs: 2px;
+  --radius-xs: 4px;
   --radius-sm: 6px;
-  --radius-lg: 12px; /* ✎ NEW — card corner */
-  --radius-full: 9999px; /* the Pill's shape — already existed in Figma's
-                            Radius collection; reused, not invented. */
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
 
   /* --- Type ---------------------------------------------------------------
      The full ramp from Figma's "6. Typography" collection. Sizes and line
@@ -290,6 +312,25 @@
 
   --pill-selected-elevation: var(--shadow-xs-skeuomorphic);
   --pill-selected-focus-ring: var(--focus-ring-shadow-xs-skeuomorphic);
+
+  /* --- Symptom card --------------------------------------------------------
+     Read from `Card / Symptom select`. Every value is a token in the source. */
+  --card-bg: var(--colors-basics-white);
+  --card-border: var(--colors-border-border-tertiary);
+  --card-radius: var(--radius-xl);
+  --card-padding: var(--spacing-3xl);
+  --card-elevation: var(--shadow-md);
+
+  /* The card's rhythm — three steps, and they're deliberately unequal:
+       header → pills   20px  (related: the question and its answers)
+       block  → CTA     48px  (a commitment; it gets room to breathe)
+     Hierarchy comes from spacing and weight, not from adding more colour. */
+  --card-gap-section: var(--spacing-6xl); /* 48 */
+  --card-gap-block: var(--spacing-2xl); /* 20 */
+  --card-gap-header: var(--spacing-md); /* 8 */
+
+  --card-title-fg: var(--colors-text-secondary-hover);
+  --card-helper-fg: var(--colors-text-secondary-700);
 
   /* Surfaces & text */
   --surface-page: var(--colors-base-15);

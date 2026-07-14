@@ -1,0 +1,99 @@
+/* SymptomCard — mirrors `Card / Symptom select` in Figma.
+   Every value is a token. */
+
+.card {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 440px; /* layout: the card's width is a composition choice, not a
+                       system value. The Containers collection has no card token. */
+
+  background-color: var(--card-bg);
+  box-shadow:
+    inset 0 0 0 1px var(--card-border),
+    var(--card-elevation);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+
+  /* The rhythm is deliberately uneven, and that's where the hierarchy comes from
+     — not from adding more colour:
+
+       header  →  pills    20px   related: the question and the answers to it
+       block   →  CTA      48px   a commitment; it gets room to breathe
+
+     A single even gap would flatten all three into one list. */
+  gap: var(--card-gap-section);
+}
+
+/* The question and its answers travel together. */
+.card__block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap-block);
+}
+
+.card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap-header);
+}
+
+/* = Figma text style "Text xl/Semibold" (20/30, tracking 0) */
+.card__title {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-text-xl);
+  line-height: var(--line-height-text-xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-text);
+  color: var(--card-title-fg);
+}
+
+/* = Figma text style "Text sm/Regular" */
+.card__helper {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-text-sm);
+  line-height: var(--line-height-text-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--card-helper-fg);
+}
+
+/* A <fieldset> is the correct container for a set of related toggles — it gives
+   the group an accessible name via <legend>. Chrome reset; we want the semantics,
+   not the browser's default look. */
+.card__fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.card__legend {
+  /* Visually hidden: the <h2> already says this on screen, so repeating it would
+     be noise — but the group still needs an accessible name. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Announced, not drawn. A sighted user gets feedback from the pill inverting;
+   without this a screen-reader user would get none at all. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

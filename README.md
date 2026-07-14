@@ -2,10 +2,15 @@
 
 Button → code, extended into a **Selectable Pill**, applied in a symptom-select card.
 
+### **[→ Live docs](https://chloewu-midi-takehome.vercel.app)**
+
+A design-system documentation page: every component live, next to the code that produced
+it, plus the flags I found in the source file. No install needed.
+
 ```bash
 npm install
-npm run dev      # a design-system docs page: live examples + the code that made them
-npm run verify   # token-lint + typecheck + build
+npm run dev      # the same page, locally
+npm run verify   # token-lint + typecheck + build — no hardcoded values allowed
 ```
 
 **[→ HANDOFF.md](./HANDOFF.md)** — what I found in the Figma file, prioritised for the

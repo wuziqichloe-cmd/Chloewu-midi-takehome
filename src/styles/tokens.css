@@ -323,10 +323,10 @@
 
   /* The card's rhythm — three steps, and they're deliberately unequal:
        header → pills   20px  (related: the question and its answers)
-       block  → CTA     48px  (a commitment; it gets room to breathe)
+       question → CTA   48px  (a commitment; it gets room to breathe)
      Hierarchy comes from spacing and weight, not from adding more colour. */
   --card-gap-section: var(--spacing-6xl); /* 48 */
-  --card-gap-block: var(--spacing-2xl); /* 20 */
+  --card-gap-question: var(--spacing-2xl); /* 20 */
   --card-gap-header: var(--spacing-md); /* 8 */
 
   --card-title-fg: var(--colors-text-secondary-hover);

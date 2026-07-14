@@ -19,18 +19,19 @@
   /* The rhythm is deliberately uneven, and that's where the hierarchy comes from
      — not from adding more colour:
 
-       header  →  pills    20px   related: the question and the answers to it
-       block   →  CTA      48px   a commitment; it gets room to breathe
+       header    →  pills   20px   related: the question and the answers to it
+       question  →  CTA     48px   a commitment; it gets room to breathe
 
      A single even gap would flatten all three into one list. */
   gap: var(--card-gap-section);
 }
 
-/* The question and its answers travel together. */
-.card__block {
+/* The question and its answers travel together — named `Question` in Figma too,
+   so a layer name and a class name point at the same thing. */
+.card__question {
   display: flex;
   flex-direction: column;
-  gap: var(--card-gap-block);
+  gap: var(--card-gap-question);
 }
 
 .card__header {

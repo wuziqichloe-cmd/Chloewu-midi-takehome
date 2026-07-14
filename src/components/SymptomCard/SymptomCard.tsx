@@ -40,7 +40,7 @@ export function SymptomCard() {
 
   return (
     <section className="card">
-      <div className="card__block">
+      <div className="card__question">
         <header className="card__header">
           <h2 className="card__title">Select the symptoms you're experiencing</h2>
           <p className="card__helper">Choose all that apply.</p>
